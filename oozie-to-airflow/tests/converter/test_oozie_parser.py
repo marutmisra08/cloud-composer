@@ -21,7 +21,6 @@ from xml.etree import ElementTree as ET
 from converter import parser
 from converter import parsed_node
 from converter.mappers import ACTION_MAP, CONTROL_MAP
-from converter.relation import Relation
 from definitions import ROOT_DIR
 from mappers import dummy_mapper
 from mappers import ssh_mapper
