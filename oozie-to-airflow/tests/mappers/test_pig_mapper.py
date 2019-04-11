@@ -44,10 +44,14 @@ class TestPigMapper(unittest.TestCase):
             <name>mapred.map.output.compress</name>
             <value>false</value>
         </property>
-     </configuration>
-     <script>id.pig</script>
+    </configuration>
+    <script>id.pig</script>
     <param>INPUT=/user/${wf:user()}/${examplesRoot}/input-data/text</param>
     <param>OUTPUT=/user/${wf:user()}/${examplesRoot}/output-data/demo/pig-node</param>
+    <file>test_dir/test.txt#test_link.txt</file>
+    <file>/user/pig/examples/test_pig_node/test_dir/test2.zip#test_link.zip</file>
+    <archive>test_dir/test2.zip#test_zip_dir</archive>
+    <archive>test_dir/test3.zip#test3_zip_dir</archive>
 </pig>
 """
         self.pig_node = ET.fromstring(pig_node_str)
@@ -68,6 +72,11 @@ class TestPigMapper(unittest.TestCase):
         self.assertEqual(
             "/user/${wf:user()}/${examplesRoot}/output-data/demo/pig-node", mapper.params_dict["OUTPUT"]
         )
+        # self.assertEqual(
+        #     "test_dir/test.txt#test_link.txt,/user/pig/examples/test_pig_node/test_dir/test2.zip
+        #     #test_link.zip",
+        #     mapper.hdfs_files,
+        # )
 
     def test_create_mapper_jinja(self):
         # test jinja templating

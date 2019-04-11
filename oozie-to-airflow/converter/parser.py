@@ -200,14 +200,15 @@ class OozieParser:
         """
         # The 0th element of the node is the actual action tag.
         # In the form of 'action'
-        action_name = action_node[0].tag
+        action_operation_node = action_node[0]
+        action_name = action_operation_node.tag
 
         if action_name not in self.action_map:
             action_name = "unknown"
 
         map_class = self.action_map[action_name]
         mapper = map_class(
-            oozie_node=action_node[0],
+            oozie_node=action_operation_node,
             name=action_node.attrib["name"],
             params=self.params,
             dag_name=self.dag_name,
@@ -225,18 +226,18 @@ class OozieParser:
             raise Exception("Missing error node in {}".format(action_node))
         p_node.set_error_node_name(error_node.attrib["to"])
 
-        self._parse_file_nodes(action_node, mapper)
-
-        self._parse_archive_nodes(action_node, mapper)
+        self._parse_file_nodes(action_operation_node, mapper)
+        self._parse_archive_nodes(action_operation_node, mapper)
 
         logging.info(f"Parsed {mapper.name} as Action Node of type {action_name}.")
         self.dependencies.update(mapper.required_imports())
 
         self.nodes[mapper.name] = p_node
 
+    # TODO this has to be moved inside mapper, otherwise we can't unit test this
     @staticmethod
-    def _parse_file_nodes(action_node, operator: ActionMapper):
-        file_nodes = action_node.findall("file")
+    def _parse_file_nodes(action_operation_node, operator: ActionMapper):
+        file_nodes = action_operation_node.findall("file")
         if file_nodes:
             if isinstance(operator, FileMixin):
                 for file_node in file_nodes:
@@ -245,9 +246,10 @@ class OozieParser:
             else:
                 raise Exception("The operator {} does not derive from FileMixin".format(operator))
 
+    # TODO this has to be moved inside mapper, otherwise we can't unit test this
     @staticmethod
-    def _parse_archive_nodes(action_node, operator: ActionMapper):
-        archive_nodes = action_node.findall("archive")
+    def _parse_archive_nodes(action_operation_node, operator: ActionMapper):
+        archive_nodes = action_operation_node.findall("archive")
         if archive_nodes:
             if isinstance(operator, ArchiveMixin):
                 for archive_node in archive_nodes:
