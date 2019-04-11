@@ -76,6 +76,7 @@
                     <value>/user/mapred/${examplesRoot}/mapreduce/output</value>
                 </property>
             </configuration>
+            <file>/examples/mapreduce/wordcount.jar</file>
         </map-reduce>
         <ok to="end"/>
         <error to="fail"/>

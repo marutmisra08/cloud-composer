@@ -23,6 +23,8 @@
 {{ task_id }} = dataproc_operator.DataProcHadoopOperator(
     main_class=PARAMS['hadoop_main_class'],
     arguments=['{{ properties['mapred.input.dir'] }}', '{{ properties['mapred.output.dir'] }}'],
+    files=[{{ hdfs_files }}],
+    archives=[{{ hdfs_archives }}],
     cluster_name=PARAMS['dataproc_cluster'],
     task_id='{{ task_id }}',
     trigger_rule='{{ trigger_rule }}',
