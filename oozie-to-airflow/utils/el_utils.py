@@ -157,7 +157,13 @@ def parse_els(properties_file: str, prop_dict: Dict[str, str] = None):
                         continue
                     else:
                         props = [x.strip() for x in line.split("=", 1)]
-                        prop_dict[props[0]] = replace_el_with_var(props[1], prop_dict, quote=False)
+                        value = replace_el_with_var(props[1], prop_dict, quote=False)
+                        values = value.split(",")
+                        if len(values) <= 1:
+                            prop_dict[props[0]] = values[0]
+                        else:
+                            # Construct list
+                            prop_dict[props[0]] = values
         else:
             logging.warning(f"The job.properties file is missing: {properties_file}")
     return prop_dict
